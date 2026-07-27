@@ -1,0 +1,41 @@
+name: Update Interaction Model
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+  workflow_dispatch: # Allow manual trigger from GitHub UI
+
+jobs:
+  deploy-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install Python Dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Generate Interaction Model
+        run: python generate_model.py
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install ASK CLI
+        run: npm install -g ask-cli
+        
+      - name: Deploy Interaction Model via SMAPI
+        env:
+          ASK_CLIENT_ID: ${{ secrets.ASK_CLIENT_ID }}
+          ASK_CLIENT_SECRET: ${{ secrets.ASK_CLIENT_SECRET }}
+          ASK_REFRESH_TOKEN: ${{ secrets.ASK_REFRESH_TOKEN }}
+          SKILL_ID: ${{ secrets.SKILL_ID }}
+        run: |
+          ask smapi update-interaction-model -s $SKILL_ID -g development -l en-IN -f models/en-IN.json
