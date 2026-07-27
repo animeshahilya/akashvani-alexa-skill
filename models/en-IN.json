@@ -1,0 +1,1427 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "akashvani",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.PauseIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ResumeIntent",
+          "samples": []
+        },
+        {
+          "name": "PlayStationIntent",
+          "slots": [
+            {
+              "name": "station_name",
+              "type": "RADIO_STATION",
+              "samples": [
+                "{station_name}"
+              ]
+            }
+          ],
+          "samples": [
+            "play {station_name}",
+            "start {station_name}",
+            "tune in to {station_name}",
+            "listen to {station_name}",
+            "put on {station_name}",
+            "play station {station_name}",
+            "{station_name}"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "name": "RADIO_STATION",
+          "values": [
+            {
+              "name": {
+                "value": "Akashvani Aaradhana"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Adilabad"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Agartala"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Agra"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ahilyanagar Ahmednagar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ahwa"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Aizawl"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Akola"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Almora"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Alwar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ambikapur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Amravati"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Anantapur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Andhra Pradesh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ayodhya"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Balaghat"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Balangir"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bangla"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Banswara"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bareilly"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Baripada"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Barmer"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Beed"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bellari"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Belonia"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Berhampur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Betul"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bhaderwah"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bhadravati"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bhagalpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bhatinda"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bhawanipatna"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bhopal"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bhuj"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bijapur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bikaner"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Bilaspur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Calicut"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chaibasa"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chandigarh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chandrapur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chhatarpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chhatrapati Sambhaji Nagar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chhattisgarh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chhindwara"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chitradurga"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Chittorgarh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Churachandpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Churu"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Coimbatore"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Cuttack"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Daltonganj"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Daman"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Darbhanga"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Dehradun"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Devikulam"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Dharamshala"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Dharashiv"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Dharmapuri"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Dharwad"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Dhule"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Dibrugarh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Diphu"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Gangtok"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Godhra"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Gorakhpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Guna"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Guwahati Mahabahu"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Guwahati Prayagjyotishpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Gwalior"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Haflong"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Hamirpur FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Hassan"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Hazaribagh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Himmatnagar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Hisar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Hospet"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Imphal Kangla"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Imphal Sangai"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Indore"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Itanagar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jabalpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jabalpur FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jagdalpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jaipur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jaisalmer"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jalgaon"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jammu"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jamshedpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jeypore"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jhalawar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jhansi"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jodhpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jodhpur Sun City FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Joranda"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jorhat"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Jowai"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kadapa"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kailashahar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kalaburgi Gulbarga"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kannur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kanpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Karaikal"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kargil"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Karnataka"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Karwar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kathua"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kavaratti"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Keonjhar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kerala"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Khandwa"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kochi"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kodaikanal"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kohima"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kokrajhar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kolhapur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kolkata Geetanjali"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kolkata Sanchayita"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kota"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kothagudem"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kozhikode Real FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kurnool"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kurseong"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Kurukshetra"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Leh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Lucknow"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ludhiana"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Lunglei"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Madikeri"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Madurai"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Mahanadi Sambalpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Maitree"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Mangalore"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Manjeri"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Marathi Mumbai Asmita"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Markapur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Mathura"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Mhadei Panaji"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Mokokchung"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Mount Abu"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Murshidabad"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Mysuru"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Nagaon"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Nagaur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Nagpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Najibabad"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Nanded"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Nasik"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Nizamabad"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani North East Livestream"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Obra"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ooty"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Parbhani"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Pasighat"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Patiala"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Patna"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Pauri"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Poonch"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Prayagraj"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Puducherry"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Pune"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Pune FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Punjabi"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Puri FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Purnia Bihar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Raichur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Raigarh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Rajkot"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Rampur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ranchi"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ratnagiri"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Rewa"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Rohtak"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Rourkela"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Sagar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Sambalpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Sangli"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Saraipali"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Sasaram"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Satara"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Sawai Madhopur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Shahdol"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Shantiniketan"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Shillong"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Shimla"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Shimla FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Shivpuri"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Silchar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Siliguri"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Sindhudurg"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Solapur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Sri Vijaya Puram Akashvani Port Blair"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Srinagar"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Surat"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Suratgarh"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tamil Nadu"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tawang"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Telangana"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tezpur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tezu"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Thrissur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tiruchirappalli"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tiruchirappalli FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tirunelveli"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tirupati"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tura"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Tuticorin"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Udaipur"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Udaipur FM Lake City"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ujjain"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Vadodara"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Varanasi"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Visakhapatnam"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Warangal"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Yavatmal"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashvani Ziro"
+              }
+            },
+            {
+              "name": {
+                "value": "Akashwani Gujarati"
+              }
+            },
+            {
+              "name": {
+                "value": "Amrutvarshini"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Arun Itanagar"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Gold Chennai"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Gold Delhi"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Gold Kolkata"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Gold Mumbai"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Jongphi Shillong"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Nagercoil Kumari"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Chennai"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Coimbatore"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Cuttack"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Delhi"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Hyderabad"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Jalandhar"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Kanpur"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Kochi"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Kolkata"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Lucknow"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Mumbai"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Patna"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Puducherry"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Ranchi"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Tirunelveli"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Vijayawada"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Rainbow Visakhapatnam"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Simahapuri Nellore"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Tragopan Kohima"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Ujjayanta Agartala"
+              }
+            },
+            {
+              "name": {
+                "value": "FM Zoawi Aizawl"
+              }
+            },
+            {
+              "name": {
+                "value": "Indraprastha"
+              }
+            },
+            {
+              "name": {
+                "value": "KumbhVani"
+              }
+            },
+            {
+              "name": {
+                "value": "Live News 24x7"
+              }
+            },
+            {
+              "name": {
+                "value": "Raagam"
+              }
+            },
+            {
+              "name": {
+                "value": "Rainbow Kannada Kaamanbilu"
+              }
+            },
+            {
+              "name": {
+                "value": "Samvadita Mumbai"
+              }
+            },
+            {
+              "name": {
+                "value": "VB KANNADA"
+              }
+            },
+            {
+              "name": {
+                "value": "VB MALAYALAM"
+              }
+            },
+            {
+              "name": {
+                "value": "VB Tamil Chennai"
+              }
+            },
+            {
+              "name": {
+                "value": "VB Telugu Hyderabad"
+              }
+            },
+            {
+              "name": {
+                "value": "VB Telugu Vijayawada"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Ahmedabad"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Bhopal"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Cuttack"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Delhi"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Indore"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Jaipur"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Jamshedpur"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Kolkata"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Mumbai"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Nagpur"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Panaji"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Patna"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Raipur"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Rajkot"
+              }
+            },
+            {
+              "name": {
+                "value": "VBS Ranchi"
+              }
+            },
+            {
+              "name": {
+                "value": "Vividh Bharati"
+              }
+            },
+            {
+              "name": {
+                "value": "Vividh Bharati Vijayapuram"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
