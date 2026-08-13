@@ -2,7 +2,7 @@ import json
 import os
 import requests
 
-STATIONS_JSON_URL = "https://raw.githubusercontent.com/codito/akashvani/master/stations.json"
+STATIONS_JSON_URL = "https://raw.githubusercontent.com/animeshahilya/akashvani-data/main/stations.json"
 
 def generate_model():
     print(f"Fetching stations from {STATIONS_JSON_URL}")
@@ -25,7 +25,7 @@ def generate_model():
     interaction_model = {
         "interactionModel": {
             "languageModel": {
-                "invocationName": "akashvani",
+                "invocationName": "tarang",
                 "intents": [
                     {
                         "name": "AMAZON.CancelIntent",

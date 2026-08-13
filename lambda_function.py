@@ -11,7 +11,7 @@ from ask_sdk_model.interfaces.audioplayer import (
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-STATIONS_JSON_URL = "https://raw.githubusercontent.com/codito/akashvani/master/stations.json"
+STATIONS_JSON_URL = "https://raw.githubusercontent.com/animeshahilya/akashvani-data/main/stations.json"
 
 def fetch_stations():
     try:
@@ -27,7 +27,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         return is_request_type("LaunchRequest")(handler_input)
 
     def handle(self, handler_input):
-        speech_text = "Welcome to Akashvani Radio. Which station would you like to listen to?"
+        speech_text = "Welcome to Tarang. Which station would you like to listen to?"
         return handler_input.response_builder.speak(speech_text).ask(speech_text).response
 
 class PlayStationIntentHandler(AbstractRequestHandler):
