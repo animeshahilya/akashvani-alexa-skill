@@ -5,7 +5,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import lambda_function
-from lambda_function import find_station, fetch_stations, _normalize_spoken_numbers
+from lambda_function import find_station, fetch_stations, find_backup_url, _normalize_spoken_numbers
 
 
 STATIONS = [
@@ -142,3 +142,66 @@ def test_fetch_stations_retries_then_serves_stale_cache_on_total_failure(monkeyp
     result = fetch_stations()
 
     assert result == [{"name": "Stale Station", "stream_url": "https://example.com/stale.mp3"}]
+
+
+def test_find_backup_url_present():
+    stations = [{"name": "AIR Malayalam", "stream_url": "https://x.example/main.mp3", "backup_url": "https://x.example/backup.mp3"}]
+    assert find_backup_url(stations, "AIR Malayalam") == "https://x.example/backup.mp3"
+
+
+def test_find_backup_url_absent():
+    stations = [{"name": "AIR Malayalam", "stream_url": "https://x.example/main.mp3", "backup_url": ""}]
+    assert find_backup_url(stations, "AIR Malayalam") is None
+
+
+def test_find_backup_url_no_matching_station():
+    stations = [{"name": "AIR Malayalam", "stream_url": "https://x.example/main.mp3", "backup_url": "https://x.example/backup.mp3"}]
+    assert find_backup_url(stations, "Some Other Station") is None
+
+
+def _build_playback_failed_handler_input(token, extra_stations=None, monkeypatch=None):
+    """Real ask-sdk-model objects, not duck-typed fakes - catches API mismatches a hand-rolled
+    stub would silently hide. AudioPlayer requests have no session, matching real device behavior."""
+    from ask_sdk_core.attributes_manager import AttributesManager
+    from ask_sdk_core.handler_input import HandlerInput
+    from ask_sdk_model import RequestEnvelope
+    from ask_sdk_model.interfaces.audioplayer import PlaybackFailedRequest, AudioPlayerState, Error
+
+    stations = [
+        {"name": "AIR Malayalam", "stream_url": "https://x.example/main.mp3", "backup_url": "https://x.example/backup.mp3"},
+        {"name": "No Backup Station", "stream_url": "https://x.example/nb.mp3", "backup_url": ""},
+    ] + (extra_stations or [])
+    if monkeypatch is not None:
+        monkeypatch.setattr(lambda_function, "fetch_stations", lambda: stations)
+
+    request = PlaybackFailedRequest(
+        current_playback_state=AudioPlayerState(token=token),
+        error=Error(message="simulated failure"),
+    )
+    envelope = RequestEnvelope(version="1.0", session=None, request=request)
+    return HandlerInput(request_envelope=envelope, attributes_manager=AttributesManager(envelope))
+
+
+def test_playback_failed_retries_via_backup_url(monkeypatch):
+    handler_input = _build_playback_failed_handler_input("AIR Malayalam", monkeypatch=monkeypatch)
+    response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
+
+    directives = response.directives
+    assert directives and len(directives) == 1
+    stream = directives[0].audio_item["stream"]
+    assert stream["url"] == "https://x.example/backup.mp3"
+    assert stream["token"] == "AIR Malayalam::backup"
+
+
+def test_playback_failed_does_not_retry_a_backup_that_already_failed():
+    handler_input = _build_playback_failed_handler_input("AIR Malayalam::backup")
+    response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
+
+    assert not response.directives
+
+
+def test_playback_failed_no_directive_when_station_has_no_backup(monkeypatch):
+    handler_input = _build_playback_failed_handler_input("No Backup Station", monkeypatch=monkeypatch)
+    response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
+
+    assert not response.directives

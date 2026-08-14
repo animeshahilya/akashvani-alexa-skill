@@ -171,6 +171,19 @@ def find_station(stations, requested_name, max_options=3):
 
     return None, []
 
+# Marks a stream token as already-a-backup-retry, so PlaybackFailed only ever falls back once per
+# playback attempt instead of looping if the backup is also broken. Deliberately not "|" or other
+# punctuation that could plausibly appear in a scraped station name.
+_BACKUP_TOKEN_SUFFIX = "::backup"
+
+def find_backup_url(stations, station_name):
+    """Returns the backup_url for a station name, or None if it doesn't have one. Most of the
+    catalog doesn't (~126 of ~3100 do, per a live check of akashvani-data)."""
+    for s in stations:
+        if s.get("name") == station_name and s.get("backup_url"):
+            return s["backup_url"]
+    return None
+
 class LaunchRequestHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         return is_request_type("LaunchRequest")(handler_input)
@@ -316,15 +329,48 @@ class AudioPlayerEventHandler(AbstractRequestHandler):
     """Most AudioPlayer events are informational no-ops, but PlaybackFailed is logged with its
     error details - a real, non-trivial fraction of the station catalog has broken stream URLs
     (see akashvani-data), and this was previously invisible since the handler dropped every
-    AudioPlayer.* event silently, including failures."""
+    AudioPlayer.* event silently, including failures.
+
+    PlaybackFailed additionally retries once via the station's backup_url when one exists (~126
+    of ~3100 stations have one). AudioPlayer requests can arrive with no active voice session -
+    handler_input.attributes_manager.session_attributes raises in that case - so retry state is
+    tracked in the stream token itself (a "::backup" suffix) rather than session attributes."""
     def can_handle(self, handler_input):
-        return handler_input.request_envelope.request.type.startswith("AudioPlayer.")
+        # NOT request.type - the ask-sdk-model deserializer maps the JSON "type" field to a
+        # Python attribute called object_type (attribute_map = {'object_type': 'type', ...}),
+        # so .type raises AttributeError on every real AudioPlayer request. That exception would
+        # get caught by CatchAllExceptionHandler and spoken aloud, interrupting playback with
+        # "Sorry, there was a problem..." on every single AudioPlayer event a real device sends -
+        # this was silent in testing because the browser's text simulator never truly decodes
+        # audio, so it never emits genuine AudioPlayer.* requests to catch this against.
+        return handler_input.request_envelope.request.object_type.startswith("AudioPlayer.")
 
     def handle(self, handler_input):
         request = handler_input.request_envelope.request
-        if request.type == "AudioPlayer.PlaybackFailed":
-            token = getattr(getattr(request, "current_playback_state", None), "token", None)
+        if request.object_type == "AudioPlayer.PlaybackFailed":
+            token = getattr(getattr(request, "current_playback_state", None), "token", None) or ""
             logger.error(f"AudioPlayer.PlaybackFailed for token={token!r}: {getattr(request, 'error', None)}")
+
+            if not token.endswith(_BACKUP_TOKEN_SUFFIX):
+                backup_url = find_backup_url(fetch_stations(), token)
+                if backup_url:
+                    logger.info(f"Retrying {token!r} via its backup_url after PlaybackFailed")
+                    return (
+                        handler_input.response_builder
+                            .add_directive(
+                                PlayDirective(
+                                    play_behavior=PlayBehavior.REPLACE_ALL,
+                                    audio_item={
+                                        "stream": {
+                                            "token": token + _BACKUP_TOKEN_SUFFIX,
+                                            "url": backup_url,
+                                            "offset_in_milliseconds": 0
+                                        }
+                                    }
+                                )
+                            )
+                            .response
+                    )
         return handler_input.response_builder.response
 
 class CatchAllExceptionHandler(AbstractExceptionHandler):
