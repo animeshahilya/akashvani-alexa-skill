@@ -38,4 +38,4 @@ jobs:
           ASK_REFRESH_TOKEN: ${{ secrets.ASK_REFRESH_TOKEN }}
           SKILL_ID: ${{ secrets.SKILL_ID }}
         run: |
-          ask smapi update-interaction-model -s $SKILL_ID -g development -l en-IN -f models/en-IN.json
+          ask smapi set-interaction-model -s $SKILL_ID -g development -l en-IN --interaction-model "file:models/en-IN.json"
