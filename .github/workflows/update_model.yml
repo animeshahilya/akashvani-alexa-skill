@@ -33,9 +33,15 @@ jobs:
         
       - name: Deploy Interaction Model via SMAPI
         env:
-          ASK_CLIENT_ID: ${{ secrets.ASK_CLIENT_ID }}
-          ASK_CLIENT_SECRET: ${{ secrets.ASK_CLIENT_SECRET }}
+          # ask-cli only activates its config-file-less "env profile" mode when
+          # ASK_REFRESH_TOKEN (or ASK_ACCESS_TOKEN) AND ASK_VENDOR_ID are both set -
+          # without ASK_VENDOR_ID it ignores the env vars entirely and tries to read
+          # ~/.ask/cli_config from disk, which doesn't exist on a fresh runner.
+          # ASK_LWA_CLIENT_ID/ASK_LWA_CLIENT_CONFIRMATION are deliberately left unset:
+          # the refresh token was minted against ask-cli's own built-in LWA client, so
+          # it authenticates fine against that client's defaults.
           ASK_REFRESH_TOKEN: ${{ secrets.ASK_REFRESH_TOKEN }}
+          ASK_VENDOR_ID: ${{ secrets.ASK_VENDOR_ID }}
           SKILL_ID: ${{ secrets.SKILL_ID }}
         run: |
           ask smapi set-interaction-model -s $SKILL_ID -g development -l en-IN --interaction-model "file:models/en-IN.json"
