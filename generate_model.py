@@ -11,13 +11,17 @@ def generate_model():
     stations = response.json()
     
     # Extract unique station names for the custom slot type
+    # Alexa rejects any slot value over 140 characters - a handful of scraped entries
+    # are garbled multi-station blobs well past that, so they're dropped rather than
+    # truncated (a truncated blob isn't a name anyone would actually say either).
+    MAX_SLOT_VALUE_LENGTH = 140
     station_names = set()
     for s in stations:
         name = s.get("name")
         if name:
             # Basic cleanup for Alexa slot values (alphanumeric and spaces)
             cleaned = "".join(c for c in name if c.isalnum() or c.isspace()).strip()
-            if cleaned:
+            if cleaned and len(cleaned) <= MAX_SLOT_VALUE_LENGTH:
                 station_names.add(cleaned)
     
     slot_values = [{"name": {"value": name}} for name in sorted(list(station_names))]
@@ -52,10 +56,7 @@ def generate_model():
                         "slots": [
                             {
                                 "name": "station_name",
-                                "type": "RADIO_STATION",
-                                "samples": [
-                                    "{station_name}"
-                                ]
+                                "type": "RADIO_STATION"
                             }
                         ],
                         "samples": [

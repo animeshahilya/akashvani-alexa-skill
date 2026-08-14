@@ -28,10 +28,7 @@
           "slots": [
             {
               "name": "station_name",
-              "type": "RADIO_STATION",
-              "samples": [
-                "{station_name}"
-              ]
+              "type": "RADIO_STATION"
             }
           ],
           "samples": [
@@ -2732,11 +2729,6 @@
             {
               "name": {
                 "value": "Blu Radio Medell\u00edn 979 FM"
-              }
-            },
-            {
-              "name": {
-                "value": "Blu Radio se\u00f1al nacional HJCK 899 MHz FM Bogot\u00e1  HJN42 963 MHz San Mart\u00edn Meta  HJH87 1031 MHz Paipa Boyac\u00e1  HJOM 1090 KHz Cartagena de Indias  HJM47 1031 MHz Algeciras Huila  HJQ43 941 MHz Bugalagrande Valle del Cauca"
               }
             },
             {
