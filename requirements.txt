@@ -1,5 +1,1 @@
 ask-sdk-core==1.19.0
-requests==2.31.0
-# The hosted skill's Python 3.8 Lambda runtime ships OpenSSL 1.0.2 (FIPS build); urllib3 v2 refuses
-# to import against anything older than 1.1.1, which breaks the whole handler at cold start.
-urllib3<2

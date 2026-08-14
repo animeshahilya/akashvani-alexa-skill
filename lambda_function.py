@@ -1,5 +1,6 @@
+import json
 import logging
-import requests
+import urllib.request
 from ask_sdk_core.skill_builder import SkillBuilder
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
 from ask_sdk_core.dispatch_components import AbstractExceptionHandler
@@ -14,10 +15,13 @@ logger.setLevel(logging.INFO)
 STATIONS_JSON_URL = "https://raw.githubusercontent.com/animeshahilya/akashvani-data/main/stations.json"
 
 def fetch_stations():
+    # Uses the stdlib instead of requests/urllib3 - the hosted skill's Python 3.8 runtime ships
+    # an OpenSSL too old for urllib3 v2, and pinning urllib3<2 in requirements.txt did not resolve
+    # it (still failed with the same OpenSSL import error after deploy).
     try:
-        response = requests.get(STATIONS_JSON_URL, timeout=5)
-        response.raise_for_status()
-        return response.json()
+        req = urllib.request.Request(STATIONS_JSON_URL, headers={"User-Agent": "akashvani-alexa-skill"})
+        with urllib.request.urlopen(req, timeout=5) as response:
+            return json.loads(response.read().decode("utf-8"))
     except Exception as e:
         logger.error(f"Failed to fetch stations: {e}")
         return []
