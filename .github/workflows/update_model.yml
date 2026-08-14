@@ -49,4 +49,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: unused
           SKILL_ID: ${{ secrets.SKILL_ID }}
         run: |
-          ask smapi set-interaction-model -s $SKILL_ID -g development -l en-IN --interaction-model "file:models/en-IN.json"
+          # The skill has 5 auto-cloned English locales (en-IN, en-US, en-CA, en-AU, en-GB) - all
+          # of them need the same model pushed, not just en-IN, or the skill silently falls back
+          # to the original empty template on any device not set to English (India).
+          set -e
+          for locale in en-IN en-US en-CA en-AU en-GB; do
+            echo "=== Deploying interaction model to $locale ==="
+            ask smapi set-interaction-model -s $SKILL_ID -g development -l "$locale" --interaction-model "file:models/en-IN.json"
+          done
