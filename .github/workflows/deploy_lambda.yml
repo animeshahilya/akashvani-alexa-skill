@@ -1,0 +1,68 @@
+name: Deploy Lambda Code
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "lambda_function.py"
+      - "requirements.txt"
+  workflow_dispatch:
+
+jobs:
+  deploy-code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install ASK CLI
+        run: npm install -g ask-cli
+
+      - name: Push code to the Alexa-Hosted skill's git repository
+        env:
+          # See update_model.yml for why ASK_VENDOR_ID/AWS_* are required here even
+          # though this step never touches AWS.
+          ASK_REFRESH_TOKEN: ${{ secrets.ASK_REFRESH_TOKEN }}
+          ASK_VENDOR_ID: ${{ secrets.ASK_VENDOR_ID }}
+          AWS_ACCESS_KEY_ID: unused
+          AWS_SECRET_ACCESS_KEY: unused
+          SKILL_ID: ${{ secrets.SKILL_ID }}
+        run: |
+          set -e
+
+          REPO_URL=$(ask smapi get-alexa-hosted-skill-metadata -s "$SKILL_ID" | python -c "import json,sys; print(json.load(sys.stdin)['alexaHosted']['repository']['url'])")
+          echo "Hosted skill git repo: $REPO_URL"
+
+          CREDS=$(ask smapi generate-credentials-for-alexa-hosted-skill -s "$SKILL_ID" --repository-url "$REPO_URL" --repository-type GIT)
+          GIT_USER=$(echo "$CREDS" | python -c "import json,sys,urllib.parse; print(urllib.parse.quote(json.load(sys.stdin)['repositoryCredentials']['username'], safe=''))")
+          GIT_PASS=$(echo "$CREDS" | python -c "import json,sys,urllib.parse; print(urllib.parse.quote(json.load(sys.stdin)['repositoryCredentials']['password'], safe=''))")
+
+          AUTH_URL=$(echo "$REPO_URL" | sed "s#https://#https://${GIT_USER}:${GIT_PASS}@#")
+
+          git clone "$AUTH_URL" hosted_repo
+          mkdir -p hosted_repo/lambda
+          cp lambda_function.py hosted_repo/lambda/lambda_function.py
+          cp requirements.txt hosted_repo/lambda/requirements.txt
+          # Stale leftover from the default hosted-skill boilerplate template - not part of this app.
+          rm -f hosted_repo/lambda/utils.py
+
+          cd hosted_repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to deploy."
+          else
+            git commit -m "Sync lambda code from animeshahilya/akashvani-alexa-skill@${GITHUB_SHA}"
+            git push
+          fi
