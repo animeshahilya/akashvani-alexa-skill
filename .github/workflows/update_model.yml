@@ -33,15 +33,20 @@ jobs:
         
       - name: Deploy Interaction Model via SMAPI
         env:
-          # ask-cli only activates its config-file-less "env profile" mode when
-          # ASK_REFRESH_TOKEN (or ASK_ACCESS_TOKEN) AND ASK_VENDOR_ID are both set -
-          # without ASK_VENDOR_ID it ignores the env vars entirely and tries to read
-          # ~/.ask/cli_config from disk, which doesn't exist on a fresh runner.
-          # ASK_LWA_CLIENT_ID/ASK_LWA_CLIENT_CONFIRMATION are deliberately left unset:
-          # the refresh token was minted against ask-cli's own built-in LWA client, so
-          # it authenticates fine against that client's defaults.
+          # ask-cli's isEnvProfile() (profile-helper.js) only activates its config-file-less
+          # "env profile" mode - skipping the read of ~/.ask/cli_config, which doesn't exist on
+          # a fresh runner - when ALL FOUR of ASK_REFRESH_TOKEN, ASK_VENDOR_ID, AWS_ACCESS_KEY_ID,
+          # and AWS_SECRET_ACCESS_KEY are set. The AWS pair is bundled in for ask-cli's Lambda
+          # deploy path; this skill uses Alexa-Hosted deploy instead, so `set-interaction-model`
+          # never actually touches AWS - these are inert placeholders to satisfy that gate.
+          # ASK_LWA_CLIENT_ID/ASK_LWA_CLIENT_CONFIRMATION are deliberately left unset: the refresh
+          # token was minted against ask-cli's own built-in LWA client, so it authenticates fine
+          # against that client's defaults. Verified end-to-end against a fake empty HOME before
+          # relying on this.
           ASK_REFRESH_TOKEN: ${{ secrets.ASK_REFRESH_TOKEN }}
           ASK_VENDOR_ID: ${{ secrets.ASK_VENDOR_ID }}
+          AWS_ACCESS_KEY_ID: unused
+          AWS_SECRET_ACCESS_KEY: unused
           SKILL_ID: ${{ secrets.SKILL_ID }}
         run: |
           ask smapi set-interaction-model -s $SKILL_ID -g development -l en-IN --interaction-model "file:models/en-IN.json"
