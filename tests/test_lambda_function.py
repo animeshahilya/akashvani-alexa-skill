@@ -5,7 +5,9 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import lambda_function
-from lambda_function import find_station, fetch_stations, find_backup_url, _normalize_spoken_numbers
+from lambda_function import (
+    find_station, fetch_stations, find_backup_url, _normalize_spoken_numbers, pick_random_station,
+)
 
 
 STATIONS = [
@@ -144,6 +146,23 @@ def test_fetch_stations_retries_then_serves_stale_cache_on_total_failure(monkeyp
     assert result == [{"name": "Stale Station", "stream_url": "https://example.com/stale.mp3"}]
 
 
+def test_pick_random_station_excludes_dead_stations():
+    excluded_name = next(iter(lambda_function.EXCLUDED_STATIONS))
+    stations = [
+        {"name": excluded_name, "stream_url": "https://example.com/dead.mp3"},
+        {"name": "Aapan Radio", "stream_url": "https://example.com/aapan.mp3"},
+    ]
+    # Only one live station in the list - every pick must land on it, never the dead one.
+    for _ in range(20):
+        assert pick_random_station(stations)["name"] == "Aapan Radio"
+
+
+def test_pick_random_station_returns_none_when_nothing_available():
+    excluded_name = next(iter(lambda_function.EXCLUDED_STATIONS))
+    assert pick_random_station([{"name": excluded_name, "stream_url": "https://example.com/dead.mp3"}]) is None
+    assert pick_random_station([]) is None
+
+
 def test_find_backup_url_present():
     stations = [{"name": "AIR Malayalam", "stream_url": "https://x.example/main.mp3", "backup_url": "https://x.example/backup.mp3"}]
     assert find_backup_url(stations, "AIR Malayalam") == "https://x.example/backup.mp3"
@@ -203,5 +222,57 @@ def test_playback_failed_does_not_retry_a_backup_that_already_failed():
 def test_playback_failed_no_directive_when_station_has_no_backup(monkeypatch):
     handler_input = _build_playback_failed_handler_input("No Backup Station", monkeypatch=monkeypatch)
     response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
+
+    assert not response.directives
+
+
+def _build_intent_handler_input(intent_name, session_attributes=None, stations=None, monkeypatch=None):
+    """Real ask-sdk-model Session/IntentRequest objects, matching the pattern already used above
+    for AudioPlayer requests - catches real API mismatches a duck-typed stub would hide."""
+    from ask_sdk_core.attributes_manager import AttributesManager
+    from ask_sdk_core.handler_input import HandlerInput
+    from ask_sdk_model import RequestEnvelope, Session, IntentRequest, Intent
+
+    if monkeypatch is not None:
+        monkeypatch.setattr(lambda_function, "fetch_stations", lambda: stations or [])
+
+    session = Session(new=False, session_id="test-session", attributes=dict(session_attributes or {}))
+    request = IntentRequest(intent=Intent(name=intent_name))
+    envelope = RequestEnvelope(version="1.0", session=session, request=request)
+    return HandlerInput(request_envelope=envelope, attributes_manager=AttributesManager(envelope))
+
+
+def test_yes_intent_plays_the_suggested_station(monkeypatch):
+    stations = [{"name": "Vividh Bharati", "stream_url": "https://x.example/vb.mp3"}]
+    handler_input = _build_intent_handler_input(
+        "AMAZON.YesIntent",
+        session_attributes={"suggested_station_name": "Vividh Bharati"},
+        stations=stations,
+        monkeypatch=monkeypatch,
+    )
+    response = lambda_function.YesIntentHandler().handle(handler_input)
+
+    directives = response.directives
+    assert directives and len(directives) == 1
+    stream = directives[0].audio_item["stream"]
+    assert stream["url"] == "https://x.example/vb.mp3"
+    assert stream["token"] == "Vividh Bharati"
+
+
+def test_yes_intent_with_no_prior_suggestion_asks_which_station(monkeypatch):
+    handler_input = _build_intent_handler_input("AMAZON.YesIntent", monkeypatch=monkeypatch)
+    response = lambda_function.YesIntentHandler().handle(handler_input)
+
+    assert not response.directives
+
+
+def test_yes_intent_when_suggested_station_no_longer_available(monkeypatch):
+    handler_input = _build_intent_handler_input(
+        "AMAZON.YesIntent",
+        session_attributes={"suggested_station_name": "Vividh Bharati"},
+        stations=[],  # suggested station vanished from the catalog before "yes" was said
+        monkeypatch=monkeypatch,
+    )
+    response = lambda_function.YesIntentHandler().handle(handler_input)
 
     assert not response.directives

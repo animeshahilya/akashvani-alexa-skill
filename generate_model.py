@@ -79,6 +79,40 @@ def generate_model():
                             "play station {station_name}",
                             "{station_name}"
                         ]
+                    },
+                    {
+                        # No slot - lets a user with no station name in mind get audio playing on
+                        # the very first try instead of needing to already know the catalog.
+                        # "Discover" is the skill's own name for this ("discover a station" is
+                        # what the skill itself says); the other samples are just how people
+                        # actually phrase the same request in the wild.
+                        "name": "DiscoverStationIntent",
+                        "samples": [
+                            "discover a station",
+                            "discover something new",
+                            "discover a new station",
+                            "help me discover a station",
+                            "discover",
+                            "surprise me",
+                            "play something",
+                            "play anything",
+                            "play something random",
+                            "play a random station",
+                            "you choose",
+                            "you pick",
+                            "you pick one",
+                            "i don't know",
+                            "i don't know you pick",
+                            "play whatever"
+                        ]
+                    },
+                    {
+                        "name": "AMAZON.YesIntent",
+                        "samples": []
+                    },
+                    {
+                        "name": "AMAZON.NoIntent",
+                        "samples": []
                     }
                 ],
                 "types": [

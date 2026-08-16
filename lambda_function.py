@@ -1,6 +1,7 @@
 import difflib
 import json
 import logging
+import random
 import re
 import time
 import urllib.request
@@ -11,6 +12,7 @@ from ask_sdk_core.utils import is_request_type, is_intent_name
 from ask_sdk_model.interfaces.audioplayer import (
     PlayDirective, PlayBehavior, StopDirective, ClearQueueDirective, ClearBehavior
 )
+from ask_sdk_model.ui import SimpleCard
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -184,15 +186,89 @@ def find_backup_url(stations, station_name):
             return s["backup_url"]
     return None
 
+def pick_random_station(stations):
+    """Picks a random non-dead station for users who don't have a specific name in mind yet -
+    the exact same knows-nothing-about-radio-station-names person the "discover a station" intent
+    exists for shouldn't get a dead catalog entry."""
+    available = [s for s in stations if s.get("name") not in EXCLUDED_STATIONS]
+    if not available:
+        return None
+    return random.choice(available)
+
+def _play_response(handler_input, station, speech, card_title="Now Playing"):
+    stream_url = station["stream_url"]
+    station_name = station["name"]
+
+    session_attr = handler_input.attributes_manager.session_attributes
+    session_attr["last_station_name"] = station_name
+    session_attr["last_stream_url"] = stream_url
+    handler_input.attributes_manager.session_attributes = session_attr
+
+    return (
+        handler_input.response_builder
+            .speak(speech)
+            .set_card(SimpleCard(card_title, station_name))
+            .add_directive(
+                PlayDirective(
+                    play_behavior=PlayBehavior.REPLACE_ALL,
+                    audio_item={
+                        "stream": {
+                            "token": station_name,
+                            "url": stream_url,
+                            "offset_in_milliseconds": 0
+                        }
+                    }
+                )
+            )
+            .response
+    )
+
 class LaunchRequestHandler(AbstractRequestHandler):
+    # A handful of well-known, verified-alive stations (not a random pull from the full ~3300-
+    # entry catalog) to name in the very first thing the skill ever says to someone - a brand-new
+    # user has no station names to reach for, and naming one specific option ("want to hear X?")
+    # is a much smaller ask than an open-ended "which station would you like?" with nothing to
+    # anchor on. Kept as a short curated list rather than pick_random_station()'s full pool so a
+    # first impression is never a station nobody outside its home city would recognize.
+    FEATURED_STATIONS = ["Vividh Bharati", "Mirchi FM", "Fever FM", "Radio City FM 98.8"]
+
+    # Varied so a skill someone opens daily doesn't greet them with the exact same line every
+    # time - a standard Alexa VUI convention for anything a user hits repeatedly.
+    GREETING_TEMPLATES = [
+        "Welcome to Tarang! Want to hear {name}, or tell me another station?",
+        "Hey there! How about {name} to start, or name your own station?",
+        "Tarang here! I can queue up {name} for you, or you can name any station you like.",
+    ]
+
     def can_handle(self, handler_input):
         return is_request_type("LaunchRequest")(handler_input)
 
     def handle(self, handler_input):
-        speech_text = "Welcome to Tarang. Which station would you like to listen to?"
-        return handler_input.response_builder.speak(speech_text).ask(speech_text).response
+        featured_name = random.choice(self.FEATURED_STATIONS)
+
+        session_attr = handler_input.attributes_manager.session_attributes
+        session_attr["suggested_station_name"] = featured_name
+        handler_input.attributes_manager.session_attributes = session_attr
+
+        speech_text = random.choice(self.GREETING_TEMPLATES).format(name=featured_name)
+        reprompt = f"Say yes for {featured_name}, name another station, or say discover a station."
+        return (
+            handler_input.response_builder
+                .speak(speech_text)
+                .ask(reprompt)
+                .set_card(SimpleCard(
+                    "Tarang",
+                    f"Want to hear {featured_name}? Say yes, name another station, or say \"discover a station.\""
+                ))
+                .response
+        )
 
 class PlayStationIntentHandler(AbstractRequestHandler):
+    # Kept short (unlike the greeting/farewell variety) since this line is spoken right before
+    # audio starts and needs to get out of the way quickly - but even three options stop it from
+    # sounding like a fixed script on every single request.
+    PLAYING_PHRASES = ["Playing {name}.", "Here's {name}.", "Tuning in to {name} now."]
+
     def can_handle(self, handler_input):
         return is_intent_name("PlayStationIntent")(handler_input)
 
@@ -201,7 +277,7 @@ class PlayStationIntentHandler(AbstractRequestHandler):
         station_slot = slots.get("station_name")
 
         if not station_slot or not station_slot.value:
-            speech = "Please specify a station name."
+            speech = "Sure! Which station would you like me to play?"
             return handler_input.response_builder.speak(speech).ask(speech).response
 
         stations = fetch_stations()
@@ -211,42 +287,72 @@ class PlayStationIntentHandler(AbstractRequestHandler):
             if options:
                 names = [o["name"] for o in options]
                 if len(names) == 1:
-                    speech = f"I couldn't find an exact match for {station_slot.value}. Did you mean {names[0]}? Just say the station name to play it."
+                    speech = f"I couldn't find an exact match for {station_slot.value}, but did you mean {names[0]}? Just say the name to play it."
                 else:
                     listed = ", ".join(names[:-1]) + f", or {names[-1]}"
                     speech = f"I couldn't find an exact match for {station_slot.value}. Did you mean {listed}? Say one of those to play it."
                 return handler_input.response_builder.speak(speech).ask(speech).response
 
-            speech = f"Sorry, I could not find a station named {station_slot.value}."
-            return handler_input.response_builder.speak(speech).ask("Try another station.").response
+            speech = f"Hmm, I couldn't find a station called {station_slot.value}. Want to try another name, or say discover a station?"
+            return handler_input.response_builder.speak(speech).ask("Which station would you like to try, or say discover a station?").response
 
-        stream_url = matched_station["stream_url"]
-        station_name = matched_station["name"]
+        speech = random.choice(self.PLAYING_PHRASES).format(name=matched_station["name"])
+        return _play_response(handler_input, matched_station, speech)
 
+class DiscoverStationIntentHandler(AbstractRequestHandler):
+    """Handles "discover a station" / "surprise me" / "I don't know" - the easiest possible way
+    for someone with zero familiarity with the catalog to get audio playing on their very first
+    try, instead of the skill's only path forward being "you must already know an exact station
+    name.\""""
+    DISCOVER_PHRASES = [
+        "Discovered {name} for you.",
+        "Here's something new: {name}.",
+        "Let's give {name} a listen.",
+    ]
+
+    def can_handle(self, handler_input):
+        return is_intent_name("DiscoverStationIntent")(handler_input)
+
+    def handle(self, handler_input):
+        station = pick_random_station(fetch_stations())
+        if not station:
+            speech = "Sorry, I couldn't find any stations to play right now. Please try again shortly."
+            return handler_input.response_builder.speak(speech).response
+
+        speech = random.choice(self.DISCOVER_PHRASES).format(name=station["name"])
+        return _play_response(handler_input, station, speech, card_title="Discover Pick")
+
+class YesIntentHandler(AbstractRequestHandler):
+    """Only meaningful right after LaunchRequestHandler names a specific featured station and
+    asks "want to hear X?" - session_attr["suggested_station_name"] is how that suggestion
+    survives to this turn. A bare "yes" with nothing suggested (e.g. mid-conversation, out of
+    context) has nothing to confirm, so it's treated like a fresh "which station" prompt."""
+    def can_handle(self, handler_input):
+        return is_intent_name("AMAZON.YesIntent")(handler_input)
+
+    def handle(self, handler_input):
         session_attr = handler_input.attributes_manager.session_attributes
-        session_attr["last_station_name"] = station_name
-        session_attr["last_stream_url"] = stream_url
-        handler_input.attributes_manager.session_attributes = session_attr
+        suggested_name = session_attr.get("suggested_station_name")
 
-        speech = f"Playing {station_name}."
+        if not suggested_name:
+            speech = "Sorry, I'm not sure what you're saying yes to. Which station would you like?"
+            return handler_input.response_builder.speak(speech).ask(speech).response
 
-        return (
-            handler_input.response_builder
-                .speak(speech)
-                .add_directive(
-                    PlayDirective(
-                        play_behavior=PlayBehavior.REPLACE_ALL,
-                        audio_item={
-                            "stream": {
-                                "token": station_name,
-                                "url": stream_url,
-                                "offset_in_milliseconds": 0
-                            }
-                        }
-                    )
-                )
-                .response
-        )
+        matched_station, _ = find_station(fetch_stations(), suggested_name)
+        if not matched_station:
+            speech = f"Sorry, {suggested_name} isn't available right now. Which station would you like instead?"
+            return handler_input.response_builder.speak(speech).ask(speech).response
+
+        speech = f"Great choice! Playing {matched_station['name']}."
+        return _play_response(handler_input, matched_station, speech)
+
+class NoIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return is_intent_name("AMAZON.NoIntent")(handler_input)
+
+    def handle(self, handler_input):
+        speech = "No problem! Which station would you like, or say discover a station and I'll pick one for you."
+        return handler_input.response_builder.speak(speech).ask(speech).response
 
 class PauseIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
@@ -268,10 +374,10 @@ class ResumeIntentHandler(AbstractRequestHandler):
         stream_url = session_attr.get("last_stream_url")
 
         if not station_name or not stream_url:
-            speech = "I don't have a station to resume. Which station would you like?"
+            speech = "I don't have anything paused to resume. Which station would you like?"
             return handler_input.response_builder.speak(speech).ask(speech).response
 
-        speech = f"Resuming {station_name}."
+        speech = f"Welcome back! Resuming {station_name}."
         return (
             handler_input.response_builder
                 .speak(speech)
@@ -295,16 +401,28 @@ class HelpIntentHandler(AbstractRequestHandler):
         return is_intent_name("AMAZON.HelpIntent")(handler_input)
 
     def handle(self, handler_input):
-        speech = "You can say play, followed by a station name, to start listening. Which station would you like?"
-        return handler_input.response_builder.speak(speech).ask(speech).response
+        speech = (
+            "I'm Tarang, and I can play thousands of live radio stations. "
+            "Just say a station name, like 'play Radio Mirchi', and I'll start playing it. "
+            "Not sure what to pick? Say 'discover a station' and I'll choose one for you. "
+            "You can also say pause, resume, or stop anytime. Which station would you like?"
+        )
+        return (
+            handler_input.response_builder
+                .speak(speech)
+                .ask("Which station would you like to listen to?")
+                .response
+        )
 
 class CancelOrStopIntentHandler(AbstractRequestHandler):
+    FAREWELLS = ["Goodbye! Thanks for tuning in.", "See you next time!", "Catch you later!"]
+
     def can_handle(self, handler_input):
         return (is_intent_name("AMAZON.CancelIntent")(handler_input) or
                 is_intent_name("AMAZON.StopIntent")(handler_input))
 
     def handle(self, handler_input):
-        speech = "Goodbye!"
+        speech = random.choice(self.FAREWELLS)
         return (handler_input.response_builder
                 .speak(speech)
                 .add_directive(StopDirective())
@@ -315,7 +433,7 @@ class FallbackIntentHandler(AbstractRequestHandler):
         return is_intent_name("AMAZON.FallbackIntent")(handler_input)
 
     def handle(self, handler_input):
-        speech = "I didn't understand that. Which station would you like?"
+        speech = "Sorry, I didn't catch that. Which station would you like to hear?"
         return handler_input.response_builder.speak(speech).ask(speech).response
 
 class SessionEndedRequestHandler(AbstractRequestHandler):
@@ -379,12 +497,15 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
 
     def handle(self, handler_input, exception):
         logger.error(exception, exc_info=True)
-        speech = "Sorry, there was a problem handling your request."
+        speech = "Oops, something went wrong on my end. Please try again in a moment."
         return handler_input.response_builder.speak(speech).response
 
 sb = SkillBuilder()
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(PlayStationIntentHandler())
+sb.add_request_handler(DiscoverStationIntentHandler())
+sb.add_request_handler(YesIntentHandler())
+sb.add_request_handler(NoIntentHandler())
 sb.add_request_handler(PauseIntentHandler())
 sb.add_request_handler(ResumeIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
