@@ -36,7 +36,20 @@ def generate_model():
                 station_names.add(cleaned)
     
     slot_values = [{"name": {"value": name}} for name in sorted(list(station_names))]
-    
+
+    # The catalog's own most common single-language tokens (language fields like "Rajasthani,
+    # Hindi" are comma/slash-separated - see lambda_function.py's find_stations_by_language()),
+    # each with a real, non-trivial number of stations behind it as of a live catalog check
+    # (2026-08-19) - a hand-picked list rather than deriving one from every distinct token found,
+    # since the raw data also has one-off noise (stray zero-width characters, "Ml", zero-count
+    # combinations) that isn't something anyone would actually ask Alexa for by name.
+    RADIO_LANGUAGES = [
+        "Hindi", "Tamil", "English", "Urdu", "Punjabi", "Malayalam", "Bengali", "Nepali",
+        "Telugu", "Marathi", "Kannada", "Gujarati", "Odia", "Bhojpuri", "Rajasthani",
+        "Assamese", "Konkani", "Haryanvi",
+    ]
+    language_values = [{"name": {"value": language}} for language in RADIO_LANGUAGES]
+
     interaction_model = {
         "interactionModel": {
             "languageModel": {
@@ -107,6 +120,30 @@ def generate_model():
                         ]
                     },
                     {
+                        # A listener who wants *a* station in a language, not one specific name -
+                        # "play hindi radio" previously had no route at all (PlayStationIntent
+                        # would look for a station literally named "hindi radio" and fail).
+                        "name": "PlayLanguageIntent",
+                        "slots": [
+                            {
+                                "name": "language",
+                                "type": "RADIO_LANGUAGE"
+                            }
+                        ],
+                        "samples": [
+                            "play {language} radio",
+                            "play {language} stations",
+                            "play {language} music",
+                            "play some {language} radio",
+                            "play a {language} station",
+                            "i want to listen to {language} radio",
+                            "listen to {language} radio",
+                            "{language} radio",
+                            "{language} music",
+                            "{language} station"
+                        ]
+                    },
+                    {
                         "name": "AMAZON.YesIntent",
                         "samples": []
                     },
@@ -131,6 +168,10 @@ def generate_model():
                     {
                         "name": "RADIO_STATION",
                         "values": slot_values
+                    },
+                    {
+                        "name": "RADIO_LANGUAGE",
+                        "values": language_values
                     }
                 ]
             }

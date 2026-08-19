@@ -186,6 +186,25 @@ def find_backup_url(stations, station_name):
             return s["backup_url"]
     return None
 
+def find_stations_by_language(stations, requested_language):
+    """Returns every non-excluded station whose `language` field carries [requested_language] as
+    one of its whole comma/slash-separated entries (the catalog stores multi-language stations as
+    "Rajasthani, Hindi" or "Tamil/English") - a plain substring check would also match "english"
+    against "American English", which isn't what someone asking for English radio means."""
+    if not requested_language:
+        return []
+    requested = requested_language.lower().strip()
+    if not requested:
+        return []
+    matches = []
+    for s in stations:
+        if s.get("name") in EXCLUDED_STATIONS:
+            continue
+        tokens = {t.strip().lower() for t in re.split(r"[,/]", s.get("language", "")) if t.strip()}
+        if requested in tokens:
+            matches.append(s)
+    return matches
+
 def pick_random_station(stations):
     """Picks a random non-dead station for users who don't have a specific name in mind yet -
     the exact same knows-nothing-about-radio-station-names person the "discover a station" intent
@@ -321,6 +340,42 @@ class DiscoverStationIntentHandler(AbstractRequestHandler):
 
         speech = random.choice(self.DISCOVER_PHRASES).format(name=station["name"])
         return _play_response(handler_input, station, speech, card_title="Discover Pick")
+
+class PlayLanguageIntentHandler(AbstractRequestHandler):
+    """Handles "play hindi radio" / "play tamil music" / "punjabi station" - a listener who wants
+    *a* station in a language, not one specific name, previously had no path to that short of
+    already knowing a station name in that language. RADIO_LANGUAGE's values in the interaction
+    model are the catalog's own most common single-language tokens (see generate_model.py)."""
+    PLAYING_PHRASES = [
+        "Here's a {language} station: {name}.",
+        "Playing {name}.",
+        "Tuning in to {name}, a {language} station.",
+    ]
+
+    def can_handle(self, handler_input):
+        return is_intent_name("PlayLanguageIntent")(handler_input)
+
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        language_slot = slots.get("language")
+
+        if not language_slot or not language_slot.value:
+            speech = "Sure! Which language would you like?"
+            return handler_input.response_builder.speak(speech).ask(speech).response
+
+        matches = find_stations_by_language(fetch_stations(), language_slot.value)
+        if not matches:
+            speech = (
+                f"Sorry, I couldn't find any {language_slot.value} stations right now. "
+                "Which station would you like, or say discover a station?"
+            )
+            return handler_input.response_builder.speak(speech).ask(
+                "Which station would you like, or say discover a station?"
+            ).response
+
+        station = random.choice(matches)
+        speech = random.choice(self.PLAYING_PHRASES).format(name=station["name"], language=language_slot.value)
+        return _play_response(handler_input, station, speech)
 
 class YesIntentHandler(AbstractRequestHandler):
     """Only meaningful right after LaunchRequestHandler names a specific featured station and
@@ -504,6 +559,7 @@ sb = SkillBuilder()
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(PlayStationIntentHandler())
 sb.add_request_handler(DiscoverStationIntentHandler())
+sb.add_request_handler(PlayLanguageIntentHandler())
 sb.add_request_handler(YesIntentHandler())
 sb.add_request_handler(NoIntentHandler())
 sb.add_request_handler(PauseIntentHandler())

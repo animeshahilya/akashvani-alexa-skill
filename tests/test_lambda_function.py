@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import lambda_function
 from lambda_function import (
     find_station, fetch_stations, find_backup_url, _normalize_spoken_numbers, pick_random_station,
+    find_stations_by_language,
 )
 
 
@@ -100,6 +101,48 @@ def test_excluded_station_never_matches_exactly():
     station, options = find_station(stations, excluded_name)
     assert station is None
     assert options == []
+
+
+LANGUAGE_STATIONS = [
+    {"name": "Radio Mirchi Hindi", "language": "Hindi", "stream_url": "https://example.com/rmh.mp3"},
+    {"name": "Rajasthani Mix", "language": "Rajasthani, Hindi", "stream_url": "https://example.com/rm.mp3"},
+    {"name": "Tamil FM", "language": "Tamil", "stream_url": "https://example.com/tfm.mp3"},
+    {"name": "US English Talk", "language": "American English", "stream_url": "https://example.com/uset.mp3"},
+    {"name": "No Language Listed", "language": "", "stream_url": "https://example.com/nll.mp3"},
+]
+
+
+def test_find_stations_by_language_whole_token_match():
+    matches = find_stations_by_language(LANGUAGE_STATIONS, "Hindi")
+    names = {s["name"] for s in matches}
+    assert names == {"Radio Mirchi Hindi", "Rajasthani Mix"}
+
+
+def test_find_stations_by_language_is_case_insensitive():
+    matches = find_stations_by_language(LANGUAGE_STATIONS, "tamil")
+    assert [s["name"] for s in matches] == ["Tamil FM"]
+
+
+def test_find_stations_by_language_does_not_match_as_a_substring():
+    # "English" must not match "American English" - that's a different, specific station a plain
+    # "in" check would have wrongly returned for a bare "play english radio" request.
+    matches = find_stations_by_language(LANGUAGE_STATIONS, "English")
+    assert matches == []
+
+
+def test_find_stations_by_language_excludes_dead_stations(monkeypatch):
+    excluded_name = next(iter(lambda_function.EXCLUDED_STATIONS))
+    stations = [{"name": excluded_name, "language": "Hindi", "stream_url": "https://example.com/dead.mp3"}]
+    assert find_stations_by_language(stations, "Hindi") == []
+
+
+def test_find_stations_by_language_no_match():
+    assert find_stations_by_language(LANGUAGE_STATIONS, "Bengali") == []
+
+
+def test_find_stations_by_language_empty_input():
+    assert find_stations_by_language(LANGUAGE_STATIONS, "") == []
+    assert find_stations_by_language(LANGUAGE_STATIONS, None) == []
 
 
 def test_fetch_stations_caches_and_skips_refetch(monkeypatch):

@@ -63,6 +63,27 @@
           ]
         },
         {
+          "name": "PlayLanguageIntent",
+          "slots": [
+            {
+              "name": "language",
+              "type": "RADIO_LANGUAGE"
+            }
+          ],
+          "samples": [
+            "play {language} radio",
+            "play {language} stations",
+            "play {language} music",
+            "play some {language} radio",
+            "play a {language} station",
+            "i want to listen to {language} radio",
+            "listen to {language} radio",
+            "{language} radio",
+            "{language} music",
+            "{language} station"
+          ]
+        },
+        {
           "name": "AMAZON.YesIntent",
           "samples": []
         },
@@ -221,6 +242,11 @@
             },
             {
               "name": {
+                "value": "3D Puradsifm  Southradios"
+              }
+            },
+            {
+              "name": {
                 "value": "4 lobos bollywood radio"
               }
             },
@@ -361,6 +387,11 @@
             },
             {
               "name": {
+                "value": "941 Salsabila FM radio"
+              }
+            },
+            {
+              "name": {
                 "value": "955 WSB UGA"
               }
             },
@@ -486,11 +517,6 @@
             },
             {
               "name": {
-                "value": "AIR Marathi"
-              }
-            },
-            {
-              "name": {
                 "value": "AIR Nagercoil FM"
               }
             },
@@ -597,6 +623,11 @@
             {
               "name": {
                 "value": "AMR Live Tamil Radio"
+              }
+            },
+            {
+              "name": {
+                "value": "ANBU FM"
               }
             },
             {
@@ -1566,6 +1597,11 @@
             },
             {
               "name": {
+                "value": "Akashvani Poonch"
+              }
+            },
+            {
+              "name": {
                 "value": "Akashvani Prayagraj"
               }
             },
@@ -1982,11 +2018,6 @@
             {
               "name": {
                 "value": "Anboli Fm"
-              }
-            },
-            {
-              "name": {
-                "value": "Anbu FM"
               }
             },
             {
@@ -3576,11 +3607,6 @@
             },
             {
               "name": {
-                "value": "Dharmapuri Thedal FM"
-              }
-            },
-            {
-              "name": {
                 "value": "Dhatwal Ki Awaaj"
               }
             },
@@ -4446,11 +4472,6 @@
             },
             {
               "name": {
-                "value": "FRIENDS FM 909"
-              }
-            },
-            {
-              "name": {
                 "value": "FTC FM"
               }
             },
@@ -4771,7 +4792,7 @@
             },
             {
               "name": {
-                "value": "Ganatantra FM"
+                "value": "Ganatantra FM 951"
               }
             },
             {
@@ -4941,6 +4962,11 @@
             },
             {
               "name": {
+                "value": "Good News FM"
+              }
+            },
+            {
+              "name": {
                 "value": "Good times"
               }
             },
@@ -5021,6 +5047,11 @@
             },
             {
               "name": {
+                "value": "Gurdwara  Dasmesh Darbar"
+              }
+            },
+            {
+              "name": {
                 "value": "Gurdwara  Dukh Nivaran Sahib"
               }
             },
@@ -5036,12 +5067,17 @@
             },
             {
               "name": {
+                "value": "Gurdwara  Singh Sabha Surrey"
+              }
+            },
+            {
+              "name": {
                 "value": "Gurdwara  Stockton Sikh Temple"
               }
             },
             {
               "name": {
-                "value": "Gurdwara Dukh Nivaran"
+                "value": "Gurdwara Dukh Nivaran Sahib"
               }
             },
             {
@@ -5266,11 +5302,6 @@
             },
             {
               "name": {
-                "value": "Healer Radio"
-              }
-            },
-            {
-              "name": {
                 "value": "Heaven Radio India"
               }
             },
@@ -5386,7 +5417,7 @@
             },
             {
               "name": {
-                "value": "Hindi Bible Vani"
+                "value": "Hindi Bible Vani radio"
               }
             },
             {
@@ -5406,7 +5437,7 @@
             },
             {
               "name": {
-                "value": "Hindi Gazal Lovers"
+                "value": "Hindi Gazal Lovers radio"
               }
             },
             {
@@ -5616,6 +5647,11 @@
             },
             {
               "name": {
+                "value": "Idhayam FM"
+              }
+            },
+            {
+              "name": {
                 "value": "Ilaiyaraaja Radio"
               }
             },
@@ -5637,6 +5673,11 @@
             {
               "name": {
                 "value": "Ilayaraja Instrumental FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Ilmus Salaf"
               }
             },
             {
@@ -5771,11 +5812,6 @@
             },
             {
               "name": {
-                "value": "JAFFNA RADIO"
-              }
-            },
-            {
-              "name": {
                 "value": "JAGAT RADIO"
               }
             },
@@ -5826,6 +5862,11 @@
             },
             {
               "name": {
+                "value": "Jaffna Radio"
+              }
+            },
+            {
+              "name": {
                 "value": "Jaipur radio"
               }
             },
@@ -5837,6 +5878,11 @@
             {
               "name": {
                 "value": "Jap Radio"
+              }
+            },
+            {
+              "name": {
+                "value": "Jay Jagannath Odia Radio"
               }
             },
             {
@@ -5926,6 +5972,11 @@
             },
             {
               "name": {
+                "value": "Jesus Coming FM  Chinese"
+              }
+            },
+            {
+              "name": {
                 "value": "Jesus Coming FM  Croatian"
               }
             },
@@ -5942,6 +5993,11 @@
             {
               "name": {
                 "value": "Jesus Coming FM  Hausa"
+              }
+            },
+            {
+              "name": {
+                "value": "Jesus Coming FM  Hindi"
               }
             },
             {
@@ -6446,11 +6502,6 @@
             },
             {
               "name": {
-                "value": "Kripalu Bhakti Dhara Radio Live"
-              }
-            },
-            {
-              "name": {
                 "value": "Krish Tamil Radio"
               }
             },
@@ -6926,12 +6977,17 @@
             },
             {
               "name": {
-                "value": "Maippanin Kural Tamil Vanoli"
+                "value": "Maippanin Kural Tamil Vanoli radio"
               }
             },
             {
               "name": {
                 "value": "MakaoRadio"
+              }
+            },
+            {
+              "name": {
+                "value": "Malayagam FM radio"
               }
             },
             {
@@ -6997,6 +7053,11 @@
             {
               "name": {
                 "value": "Marathi Tarang"
+              }
+            },
+            {
+              "name": {
+                "value": "Masala 101"
               }
             },
             {
@@ -7217,6 +7278,11 @@
             {
               "name": {
                 "value": "Mohd Rafi Radio"
+              }
+            },
+            {
+              "name": {
+                "value": "MontrealTamilRadio"
               }
             },
             {
@@ -7636,6 +7702,11 @@
             },
             {
               "name": {
+                "value": "Non Stop Hindi"
+              }
+            },
+            {
+              "name": {
                 "value": "Nostalgic Bollywood 90s by DesiZone Radio"
               }
             },
@@ -7966,11 +8037,6 @@
             },
             {
               "name": {
-                "value": "Pradesh FM"
-              }
-            },
-            {
-              "name": {
                 "value": "Pradesh FM 105"
               }
             },
@@ -8081,7 +8147,7 @@
             },
             {
               "name": {
-                "value": "Puradsi FM"
+                "value": "Puradsi Fm"
               }
             },
             {
@@ -8132,6 +8198,11 @@
             {
               "name": {
                 "value": "RADIO 25HRS"
+              }
+            },
+            {
+              "name": {
+                "value": "RADIO BAKWAS"
               }
             },
             {
@@ -8192,6 +8263,11 @@
             {
               "name": {
                 "value": "RADIO INTERCULTURALIDAD FM"
+              }
+            },
+            {
+              "name": {
+                "value": "RADIO KONISTHA"
               }
             },
             {
@@ -8451,7 +8527,7 @@
             },
             {
               "name": {
-                "value": "Radio Ala 908 FM"
+                "value": "Radio Ala 908 FM radio"
               }
             },
             {
@@ -8581,11 +8657,6 @@
             },
             {
               "name": {
-                "value": "Radio Bakwas"
-              }
-            },
-            {
-              "name": {
                 "value": "Radio Bangla Net"
               }
             },
@@ -8602,11 +8673,6 @@
             {
               "name": {
                 "value": "Radio Baye Fall FM Listen live"
-              }
-            },
-            {
-              "name": {
-                "value": "Radio Beat"
               }
             },
             {
@@ -8786,17 +8852,17 @@
             },
             {
               "name": {
-                "value": "Radio Chimteshwor"
-              }
-            },
-            {
-              "name": {
                 "value": "Radio Chinar"
               }
             },
             {
               "name": {
                 "value": "Radio Chinar 904FM"
+              }
+            },
+            {
+              "name": {
+                "value": "Radio Choice FM"
               }
             },
             {
@@ -9076,6 +9142,11 @@
             },
             {
               "name": {
+                "value": "Radio Goldy Gujarati"
+              }
+            },
+            {
+              "name": {
                 "value": "Radio GoonGoon"
               }
             },
@@ -9131,12 +9202,22 @@
             },
             {
               "name": {
+                "value": "Radio Hot FM 105 Badin"
+              }
+            },
+            {
+              "name": {
                 "value": "Radio Hot FM 105 Hyderabad"
               }
             },
             {
               "name": {
                 "value": "Radio Hot FM 105 Larkana"
+              }
+            },
+            {
+              "name": {
+                "value": "Radio Hot FM 105 Quetta"
               }
             },
             {
@@ -9441,11 +9522,6 @@
             },
             {
               "name": {
-                "value": "Radio Konistha"
-              }
-            },
-            {
-              "name": {
                 "value": "Radio Kumari HD 3D"
               }
             },
@@ -9661,6 +9737,11 @@
             },
             {
               "name": {
+                "value": "Radio Mattoli FM"
+              }
+            },
+            {
+              "name": {
                 "value": "Radio Mauritius"
               }
             },
@@ -9787,6 +9868,11 @@
             {
               "name": {
                 "value": "Radio NCS Music"
+              }
+            },
+            {
+              "name": {
+                "value": "Radio NM Mix HD"
               }
             },
             {
@@ -10036,6 +10122,11 @@
             },
             {
               "name": {
+                "value": "Radio Pradesh FM"
+              }
+            },
+            {
+              "name": {
                 "value": "Radio Pragya 904 MHZ"
               }
             },
@@ -10112,6 +10203,11 @@
             {
               "name": {
                 "value": "Radio Rainbow"
+              }
+            },
+            {
+              "name": {
+                "value": "Radio Ranbow"
               }
             },
             {
@@ -10237,11 +10333,6 @@
             {
               "name": {
                 "value": "Radio SD 908 FM"
-              }
-            },
-            {
-              "name": {
-                "value": "Radio SLBC Thendral Fm"
               }
             },
             {
@@ -10521,6 +10612,11 @@
             },
             {
               "name": {
+                "value": "Radio Sudoorawaz"
+              }
+            },
+            {
+              "name": {
                 "value": "Radio Sugar 908"
               }
             },
@@ -10661,6 +10757,11 @@
             },
             {
               "name": {
+                "value": "Radio Urban Jazz"
+              }
+            },
+            {
+              "name": {
                 "value": "Radio Urja"
               }
             },
@@ -10687,6 +10788,11 @@
             {
               "name": {
                 "value": "Radio Vedic  247 Bhajan"
+              }
+            },
+            {
+              "name": {
+                "value": "Radio Vijaya FM"
               }
             },
             {
@@ -10816,7 +10922,7 @@
             },
             {
               "name": {
-                "value": "Radio44 Kenya"
+                "value": "Radio44"
               }
             },
             {
@@ -11261,11 +11367,6 @@
             },
             {
               "name": {
-                "value": "SS Tamil Radio Sivagangai"
-              }
-            },
-            {
-              "name": {
                 "value": "SUNRISE NEWS BULLETIN"
               }
             },
@@ -11416,7 +11517,7 @@
             },
             {
               "name": {
-                "value": "Sanjhi Awaaz Radio"
+                "value": "Sanjhi Awaaz"
               }
             },
             {
@@ -11472,6 +11573,11 @@
             {
               "name": {
                 "value": "Shaivam"
+              }
+            },
+            {
+              "name": {
+                "value": "Shaivamorg Shaiva Lahari"
               }
             },
             {
@@ -11606,17 +11712,17 @@
             },
             {
               "name": {
+                "value": "Sikh Kirtan Radio"
+              }
+            },
+            {
+              "name": {
                 "value": "Sikh Radio Live"
               }
             },
             {
               "name": {
                 "value": "SikhNet Radio  Gurdwara Sis Ganj Sahib  Delhi  India"
-              }
-            },
-            {
-              "name": {
-                "value": "SikhNet Radio  Singh Sabha Surrey"
               }
             },
             {
@@ -11647,6 +11753,11 @@
             {
               "name": {
                 "value": "Sikhnet Radio   W Singh Sahba"
+              }
+            },
+            {
+              "name": {
+                "value": "Sikhnet Radio  Akhand Paath"
               }
             },
             {
@@ -11867,11 +11978,6 @@
             {
               "name": {
                 "value": "Sooriyan FM"
-              }
-            },
-            {
-              "name": {
-                "value": "Sound Asia FM"
               }
             },
             {
@@ -12261,11 +12367,6 @@
             },
             {
               "name": {
-                "value": "THR Raaga"
-              }
-            },
-            {
-              "name": {
                 "value": "TMS RADIO"
               }
             },
@@ -12416,7 +12517,12 @@
             },
             {
               "name": {
-                "value": "Tamil Panpalai ANZ"
+                "value": "Tamil Olli"
+              }
+            },
+            {
+              "name": {
+                "value": "Tamil Panpalai"
               }
             },
             {
@@ -12471,7 +12577,7 @@
             },
             {
               "name": {
-                "value": "TamilEelam Radio"
+                "value": "TamilKuyil Radio"
               }
             },
             {
@@ -12517,11 +12623,6 @@
             {
               "name": {
                 "value": "Telangana FM"
-              }
-            },
-            {
-              "name": {
-                "value": "Telangana NRI Radio"
               }
             },
             {
@@ -12626,6 +12727,11 @@
             },
             {
               "name": {
+                "value": "Thendral FM"
+              }
+            },
+            {
+              "name": {
                 "value": "Thenisai Tamil Thendral"
               }
             },
@@ -12706,7 +12812,7 @@
             },
             {
               "name": {
-                "value": "Tilottama Fm"
+                "value": "Tilottama FM 964"
               }
             },
             {
@@ -12726,7 +12832,7 @@
             },
             {
               "name": {
-                "value": "Tn96fm"
+                "value": "Tn96FM"
               }
             },
             {
@@ -12756,6 +12862,11 @@
             },
             {
               "name": {
+                "value": "True Life in God Radio Nepali"
+              }
+            },
+            {
+              "name": {
                 "value": "Tube Tamil FM Radio \u0b9f\u0baf\u0baa \u0ba4\u0bae\u0bb4 \u0b8e\u0b83\u0baa\u0b8e\u0bae \u0baa\u0ba3\u0baa\u0bb2 \u0bb0\u0b9f\u0baf"
               }
             },
@@ -12777,11 +12888,6 @@
             {
               "name": {
                 "value": "UEVaanoli"
-              }
-            },
-            {
-              "name": {
-                "value": "ULLasam FM"
               }
             },
             {
@@ -13036,6 +13142,11 @@
             },
             {
               "name": {
+                "value": "VV Radio"
+              }
+            },
+            {
+              "name": {
                 "value": "Vaa Tamizha"
               }
             },
@@ -13177,11 +13288,6 @@
             {
               "name": {
                 "value": "Vijay FM"
-              }
-            },
-            {
-              "name": {
-                "value": "Vijaya FM"
               }
             },
             {
@@ -13371,11 +13477,6 @@
             },
             {
               "name": {
-                "value": "WIN Radio 1011FM"
-              }
-            },
-            {
-              "name": {
                 "value": "WIOE Oldies 1011 South Whitley Indiana"
               }
             },
@@ -13487,11 +13588,6 @@
             {
               "name": {
                 "value": "WSKO The Score 1260 Syracuse NY"
-              }
-            },
-            {
-              "name": {
-                "value": "WSUB1061 LpFM"
               }
             },
             {
@@ -14092,11 +14188,6 @@
             {
               "name": {
                 "value": "ibctamil"
-              }
-            },
-            {
-              "name": {
-                "value": "idhayam fm"
               }
             },
             {
@@ -14951,6 +15042,11 @@
             },
             {
               "name": {
+                "value": "\u0b89\u0bb2\u0bb2\u0b9a\u0bae \u0bb5\u0ba9\u0bb2"
+              }
+            },
+            {
+              "name": {
                 "value": "\u0b8a\u0bb0 \u0ba4\u0bae\u0bb4 \u0bb5\u0ba9\u0bb2 Uri Tamil Radio"
               }
             },
@@ -14971,6 +15067,11 @@
             },
             {
               "name": {
+                "value": "\u0ba4\u0bae\u0bb4\u0bb4 \u0bb5\u0ba9\u0bb2 North East Radio"
+              }
+            },
+            {
+              "name": {
                 "value": "\u0bae\u0ba4\u0ba4\u0bae\u0bb4 FM"
               }
             },
@@ -14982,6 +15083,101 @@
             {
               "name": {
                 "value": "\u5370\u5ea6\u5fb7\u91cc\u5e7f\u64ad\u7535\u53f0"
+              }
+            }
+          ]
+        },
+        {
+          "name": "RADIO_LANGUAGE",
+          "values": [
+            {
+              "name": {
+                "value": "Hindi"
+              }
+            },
+            {
+              "name": {
+                "value": "Tamil"
+              }
+            },
+            {
+              "name": {
+                "value": "English"
+              }
+            },
+            {
+              "name": {
+                "value": "Urdu"
+              }
+            },
+            {
+              "name": {
+                "value": "Punjabi"
+              }
+            },
+            {
+              "name": {
+                "value": "Malayalam"
+              }
+            },
+            {
+              "name": {
+                "value": "Bengali"
+              }
+            },
+            {
+              "name": {
+                "value": "Nepali"
+              }
+            },
+            {
+              "name": {
+                "value": "Telugu"
+              }
+            },
+            {
+              "name": {
+                "value": "Marathi"
+              }
+            },
+            {
+              "name": {
+                "value": "Kannada"
+              }
+            },
+            {
+              "name": {
+                "value": "Gujarati"
+              }
+            },
+            {
+              "name": {
+                "value": "Odia"
+              }
+            },
+            {
+              "name": {
+                "value": "Bhojpuri"
+              }
+            },
+            {
+              "name": {
+                "value": "Rajasthani"
+              }
+            },
+            {
+              "name": {
+                "value": "Assamese"
+              }
+            },
+            {
+              "name": {
+                "value": "Konkani"
+              }
+            },
+            {
+              "name": {
+                "value": "Haryanvi"
               }
             }
           ]
