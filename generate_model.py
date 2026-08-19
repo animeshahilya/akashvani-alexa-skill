@@ -113,6 +113,18 @@ def generate_model():
                     {
                         "name": "AMAZON.NoIntent",
                         "samples": []
+                    },
+                    {
+                        # Built-in intents only get routed to by Alexa's NLU if they're declared
+                        # here - lambda_function.py already registers a FallbackIntentHandler, but
+                        # without this entry the model has nowhere to send an utterance that misses
+                        # every PlayStationIntent sample template, so Alexa's own generic system
+                        # fallback speaks instead of the skill's own handler. This was silently
+                        # missing, making the skill look like it randomly "didn't hear" a station
+                        # request whenever the phrasing didn't fit "play/start/tune in to/listen
+                        # to/put on {station_name}" exactly.
+                        "name": "AMAZON.FallbackIntent",
+                        "samples": []
                     }
                 ],
                 "types": [
