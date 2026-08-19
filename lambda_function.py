@@ -548,7 +548,10 @@ class AudioPlayerEventHandler(AbstractRequestHandler):
     PlaybackFailed additionally retries once via the station's backup_url when one exists (~126
     of ~3100 stations have one). AudioPlayer requests can arrive with no active voice session -
     handler_input.attributes_manager.session_attributes raises in that case - so retry state is
-    tracked in the stream token itself (a "::backup" suffix) rather than session attributes."""
+    tracked in the stream token itself (a "::backup" suffix) rather than session attributes.
+
+    Once there's no backup left to try, the response speaks a "can't play this right now" message
+    and reprompts instead of returning empty - see the handle() method's own comment for why."""
     def can_handle(self, handler_input):
         # NOT request.type - the ask-sdk-model deserializer maps the JSON "type" field to a
         # Python attribute called object_type (attribute_map = {'object_type': 'type', ...}),
@@ -565,7 +568,8 @@ class AudioPlayerEventHandler(AbstractRequestHandler):
             token = getattr(getattr(request, "current_playback_state", None), "token", None) or ""
             logger.error(f"AudioPlayer.PlaybackFailed for token={token!r}: {getattr(request, 'error', None)}")
 
-            if not token.endswith(_BACKUP_TOKEN_SUFFIX):
+            is_backup_attempt = token.endswith(_BACKUP_TOKEN_SUFFIX)
+            if not is_backup_attempt:
                 backup_url = find_backup_url(fetch_stations(), token)
                 if backup_url:
                     logger.info(f"Retrying {token!r} via its backup_url after PlaybackFailed")
@@ -585,6 +589,24 @@ class AudioPlayerEventHandler(AbstractRequestHandler):
                             )
                             .response
                     )
+
+            # Genuinely out of options for this station - no backup_url exists, or the backup
+            # itself just failed too. Previously this fell straight through to the plain empty
+            # response below, which Alexa has nothing to say for: dead air, with no way to recover
+            # short of the user starting a whole new request from scratch. This is the general
+            # safety net for any station that fails unpredictably, not just ones already known and
+            # hand-excluded (see ALEXA_INCOMPATIBLE_STATIONS, which skips the failed attempt
+            # entirely for stations already confirmed broken - this is what catches everything
+            # else).
+            station_name = token[:-len(_BACKUP_TOKEN_SUFFIX)] if is_backup_attempt else token
+            if station_name:
+                speech = (
+                    f"Sorry, I can't play {station_name} right now. Would you like to try a "
+                    "different station?"
+                )
+                return handler_input.response_builder.speak(speech).ask(
+                    "Which station would you like to try?"
+                ).response
         return handler_input.response_builder.response
 
 class CatchAllExceptionHandler(AbstractExceptionHandler):

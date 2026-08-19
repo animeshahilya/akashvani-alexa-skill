@@ -284,11 +284,42 @@ def test_playback_failed_does_not_retry_a_backup_that_already_failed():
     assert not response.directives
 
 
+def test_playback_failed_speaks_and_reprompts_when_backup_also_fails():
+    # Regression: this used to fall through to a completely empty response - Alexa has nothing to
+    # say for that, so it was silent dead air with no way to recover. The station name in the
+    # message must not include the internal "::backup" retry-marker suffix.
+    handler_input = _build_playback_failed_handler_input("AIR Malayalam::backup")
+    response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
+
+    assert not response.directives
+    assert "AIR Malayalam" in response.output_speech.ssml
+    assert "::backup" not in response.output_speech.ssml
+    assert response.reprompt is not None
+
+
 def test_playback_failed_no_directive_when_station_has_no_backup(monkeypatch):
     handler_input = _build_playback_failed_handler_input("No Backup Station", monkeypatch=monkeypatch)
     response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
 
     assert not response.directives
+
+
+def test_playback_failed_speaks_and_reprompts_when_station_has_no_backup(monkeypatch):
+    handler_input = _build_playback_failed_handler_input("No Backup Station", monkeypatch=monkeypatch)
+    response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
+
+    assert "No Backup Station" in response.output_speech.ssml
+    assert response.reprompt is not None
+
+
+def test_playback_failed_empty_response_when_token_is_blank(monkeypatch):
+    # No current_playback_state.token at all - nothing to name in a message, so this stays the
+    # original silent no-op rather than speaking an empty/broken sentence.
+    handler_input = _build_playback_failed_handler_input("", monkeypatch=monkeypatch)
+    response = lambda_function.AudioPlayerEventHandler().handle(handler_input)
+
+    assert not response.directives
+    assert response.output_speech is None
 
 
 def _build_intent_handler_input(intent_name, session_attributes=None, stations=None, monkeypatch=None, slots=None):
