@@ -96,6 +96,36 @@ EXCLUDED_STATIONS = frozenset([
     "sajeevavahini",
 ])
 
+# Not dead - these play fine in the Tarang app and pass this skill's own probe - but fail
+# specifically on a real Echo device. CloudWatch-verified 2026-08-19: both this station's primary
+# and its own independently-hosted backup mirror (added the same day, see akashvani/scraper's
+# dedupe_stations()) returned AudioPlayer.PlaybackFailed with MEDIA_ERROR_INVALID_REQUEST - an
+# HTTP-level rejection from the server, not a network/TLS failure (the TLS certificate chain was
+# checked and validates cleanly). Both URLs are hosted by the same CDN operator
+# (mystreaming.net/uber.radio), which most likely blocks Amazon's own request path specifically -
+# Radio Browser's full public database has no third, independently-hosted mirror for this station
+# to fall back to. Kept separate from EXCLUDED_STATIONS above since the reason and the right user-
+# facing message are both different (a genuinely dead stream vs. one that's alive everywhere else).
+ALEXA_INCOMPATIBLE_STATIONS = frozenset([
+    "Mirchi Love",
+])
+
+# The single set every matching/discovery function actually filters against - a station excluded
+# for either reason is equally "don't offer this," they just needed separate documentation above.
+_UNPLAYABLE_STATIONS = EXCLUDED_STATIONS | ALEXA_INCOMPATIBLE_STATIONS
+
+def find_alexa_incompatible_match(requested_name):
+    """Returns the ALEXA_INCOMPATIBLE_STATIONS name [requested_name] refers to, or None - requires
+    the same case-insensitive *exact* match find_station() itself needs before assuming a specific
+    station was meant, so a vague/fuzzy request doesn't get this specific message by accident."""
+    if not requested_name:
+        return None
+    requested = requested_name.lower().strip()
+    for name in ALEXA_INCOMPATIBLE_STATIONS:
+        if name.lower() == requested:
+            return name
+    return None
+
 _NUMBER_WORDS = {
     "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
     "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
@@ -135,7 +165,7 @@ def find_station(stations, requested_name, max_options=3):
         return None, []
 
     candidates = {requested, _normalize_spoken_numbers(requested)}
-    available = [s for s in stations if s.get("name") not in EXCLUDED_STATIONS]
+    available = [s for s in stations if s.get("name") not in _UNPLAYABLE_STATIONS]
 
     for s in available:
         if s.get("name", "").lower() in candidates:
@@ -198,7 +228,7 @@ def find_stations_by_language(stations, requested_language):
         return []
     matches = []
     for s in stations:
-        if s.get("name") in EXCLUDED_STATIONS:
+        if s.get("name") in _UNPLAYABLE_STATIONS:
             continue
         tokens = {t.strip().lower() for t in re.split(r"[,/]", s.get("language", "")) if t.strip()}
         if requested in tokens:
@@ -209,7 +239,7 @@ def pick_random_station(stations):
     """Picks a random non-dead station for users who don't have a specific name in mind yet -
     the exact same knows-nothing-about-radio-station-names person the "discover a station" intent
     exists for shouldn't get a dead catalog entry."""
-    available = [s for s in stations if s.get("name") not in EXCLUDED_STATIONS]
+    available = [s for s in stations if s.get("name") not in _UNPLAYABLE_STATIONS]
     if not available:
         return None
     return random.choice(available)
@@ -303,6 +333,17 @@ class PlayStationIntentHandler(AbstractRequestHandler):
         matched_station, options = find_station(stations, station_slot.value)
 
         if not matched_station:
+            incompatible_name = find_alexa_incompatible_match(station_slot.value)
+            if incompatible_name:
+                speech = (
+                    f"{incompatible_name} isn't available through Alexa right now - its "
+                    "streaming provider doesn't work with Echo devices, though it still plays "
+                    "fine in the Tarang app. Which other station would you like?"
+                )
+                return handler_input.response_builder.speak(speech).ask(
+                    "Which other station would you like?"
+                ).response
+
             if options:
                 names = [o["name"] for o in options]
                 if len(names) == 1:

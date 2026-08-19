@@ -103,6 +103,28 @@ def test_excluded_station_never_matches_exactly():
     assert options == []
 
 
+def test_alexa_incompatible_station_never_matches_exactly():
+    incompatible_name = next(iter(lambda_function.ALEXA_INCOMPATIBLE_STATIONS))
+    stations = [{"name": incompatible_name, "stream_url": "https://example.com/incompatible.mp3"}]
+    station, options = find_station(stations, incompatible_name)
+    assert station is None
+    assert options == []
+
+
+def test_find_alexa_incompatible_match_exact_case_insensitive():
+    incompatible_name = next(iter(lambda_function.ALEXA_INCOMPATIBLE_STATIONS))
+    assert lambda_function.find_alexa_incompatible_match(incompatible_name.upper()) == incompatible_name
+
+
+def test_find_alexa_incompatible_match_no_match():
+    assert lambda_function.find_alexa_incompatible_match("Some Other Station") is None
+
+
+def test_find_alexa_incompatible_match_empty_input():
+    assert lambda_function.find_alexa_incompatible_match("") is None
+    assert lambda_function.find_alexa_incompatible_match(None) is None
+
+
 LANGUAGE_STATIONS = [
     {"name": "Radio Mirchi Hindi", "language": "Hindi", "stream_url": "https://example.com/rmh.mp3"},
     {"name": "Rajasthani Mix", "language": "Rajasthani, Hindi", "stream_url": "https://example.com/rm.mp3"},
@@ -269,7 +291,7 @@ def test_playback_failed_no_directive_when_station_has_no_backup(monkeypatch):
     assert not response.directives
 
 
-def _build_intent_handler_input(intent_name, session_attributes=None, stations=None, monkeypatch=None):
+def _build_intent_handler_input(intent_name, session_attributes=None, stations=None, monkeypatch=None, slots=None):
     """Real ask-sdk-model Session/IntentRequest objects, matching the pattern already used above
     for AudioPlayer requests - catches real API mismatches a duck-typed stub would hide."""
     from ask_sdk_core.attributes_manager import AttributesManager
@@ -280,9 +302,26 @@ def _build_intent_handler_input(intent_name, session_attributes=None, stations=N
         monkeypatch.setattr(lambda_function, "fetch_stations", lambda: stations or [])
 
     session = Session(new=False, session_id="test-session", attributes=dict(session_attributes or {}))
-    request = IntentRequest(intent=Intent(name=intent_name))
+    request = IntentRequest(intent=Intent(name=intent_name, slots=slots))
     envelope = RequestEnvelope(version="1.0", session=session, request=request)
     return HandlerInput(request_envelope=envelope, attributes_manager=AttributesManager(envelope))
+
+
+def test_play_station_intent_gives_clear_message_for_alexa_incompatible_station(monkeypatch):
+    from ask_sdk_model import Slot
+
+    incompatible_name = next(iter(lambda_function.ALEXA_INCOMPATIBLE_STATIONS))
+    handler_input = _build_intent_handler_input(
+        "PlayStationIntent",
+        stations=[],
+        monkeypatch=monkeypatch,
+        slots={"station_name": Slot(name="station_name", value=incompatible_name)},
+    )
+    response = lambda_function.PlayStationIntentHandler().handle(handler_input)
+
+    assert not response.directives
+    assert incompatible_name in response.output_speech.ssml
+    assert "Tarang app" in response.output_speech.ssml
 
 
 def test_yes_intent_plays_the_suggested_station(monkeypatch):
